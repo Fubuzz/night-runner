@@ -9,6 +9,19 @@ class UIManager {
         // Main menu
         document.getElementById('play-btn').addEventListener('click', () => {
             audioManager.playClick();
+            
+            // Show tutorial on first play
+            if (!localStorage.getItem('nightRunnerTutorialSeen')) {
+                this.showTutorial();
+            } else {
+                this.game.startGame();
+            }
+        });
+        
+        // Tutorial
+        document.getElementById('start-tutorial-btn').addEventListener('click', () => {
+            audioManager.playClick();
+            localStorage.setItem('nightRunnerTutorialSeen', 'true');
             this.game.startGame();
         });
 
@@ -55,6 +68,11 @@ class UIManager {
         this.hideAll();
         document.getElementById('main-menu').style.display = 'block';
         this.updateMainMenuStats();
+    }
+    
+    showTutorial() {
+        this.hideAll();
+        document.getElementById('tutorial-overlay').style.display = 'flex';
     }
 
     showCharacterSelect() {
@@ -118,6 +136,7 @@ class UIManager {
         document.getElementById('level-complete-menu').style.display = 'none';
         document.getElementById('game-over-menu').style.display = 'none';
         document.getElementById('game-hud').style.display = 'none';
+        document.getElementById('tutorial-overlay').style.display = 'none';
     }
 
     updateMainMenuStats() {

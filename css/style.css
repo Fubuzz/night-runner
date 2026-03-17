@@ -64,6 +64,26 @@ body {
     text-shadow: 0 0 10px #ff10f0;
 }
 
+.instructions {
+    background: rgba(0, 255, 255, 0.1);
+    border: 2px solid #00ffff;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px auto 30px;
+    max-width: 400px;
+}
+
+.instructions p {
+    margin: 10px 0;
+    font-size: 16px;
+    line-height: 1.5;
+    color: #fff;
+}
+
+.instructions strong {
+    color: #00ffff;
+}
+
 /* Buttons */
 .btn {
     display: block;
@@ -299,6 +319,61 @@ body {
     color: #ffee00;
 }
 
+/* Tutorial Overlay */
+#tutorial-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.95);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+}
+
+.tutorial-content {
+    text-align: center;
+    padding: 30px;
+    max-width: 500px;
+}
+
+.tutorial-content h2 {
+    font-size: 32px;
+    margin-bottom: 30px;
+    color: #00ffff;
+    text-shadow: 0 0 20px #00ffff;
+}
+
+.tutorial-steps {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.tutorial-step {
+    background: rgba(0, 255, 255, 0.1);
+    border: 2px solid #00ffff;
+    border-radius: 10px;
+    padding: 20px;
+}
+
+.tutorial-icon {
+    font-size: 48px;
+    margin-bottom: 10px;
+}
+
+.tutorial-step p {
+    font-size: 14px;
+    margin: 0;
+}
+
+.tutorial-step strong {
+    color: #ffee00;
+}
+
 /* Mobile Optimization */
 @media (max-width: 600px) {
     .title {
@@ -331,6 +406,20 @@ body {
     .character-card {
         min-height: 100px;
         padding: 15px;
+    }
+    
+    .instructions {
+        font-size: 14px;
+        padding: 15px;
+    }
+    
+    .tutorial-steps {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .tutorial-content h2 {
+        font-size: 24px;
     }
 }
 
