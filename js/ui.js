@@ -150,6 +150,12 @@ class UIManager {
     updateHUD() {
         document.getElementById('hud-stars').textContent = this.game.levelStars;
         document.getElementById('hud-level').textContent = this.game.currentLevel;
+        
+        // Update health display
+        if (this.game.player) {
+            const hearts = '❤️'.repeat(this.game.player.health) + '🖤'.repeat(this.game.player.maxHealth - this.game.player.health);
+            document.getElementById('hud-health').textContent = hearts;
+        }
     }
 
     renderCharacterGrid() {

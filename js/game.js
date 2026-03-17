@@ -157,6 +157,12 @@ class Game {
             if (this.checkCollision(playerBounds, obstacle.getBounds())) {
                 if (this.player.hit()) {
                     this.handleHit();
+                    this.ui.updateHUD();
+                    
+                    // Check if dead
+                    if (this.player.isDead()) {
+                        this.handleGameOver();
+                    }
                 }
             }
         });

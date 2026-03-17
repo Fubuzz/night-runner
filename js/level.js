@@ -9,31 +9,20 @@ class Obstacle {
     }
 
     draw(ctx) {
-        // Much more visible obstacles - bright neon buildings
-        ctx.fillStyle = '#2a1b4e'; // Darker purple fill
-        ctx.strokeStyle = '#ff10f0'; // Bright pink outline
-        ctx.lineWidth = 4;
-        
-        ctx.fillRect(this.x, this.y, this.width, this.height);
-        ctx.strokeRect(this.x, this.y, this.width, this.height);
-        
-        // Add bright neon lines across building
-        ctx.strokeStyle = '#00ffff';
-        ctx.lineWidth = 2;
-        for (let i = 1; i < 4; i++) {
-            const y = this.y + (this.height / 4) * i;
-            ctx.beginPath();
-            ctx.moveTo(this.x, y);
-            ctx.lineTo(this.x + this.width, y);
-            ctx.stroke();
-        }
-        
-        // Add glow effect
+        // Simple, clean geometric obstacles
+        // Solid fill with bright outline
+        ctx.fillStyle = '#ff10f0'; // Bright pink/magenta
         ctx.shadowColor = '#ff10f0';
-        ctx.shadowBlur = 15;
-        ctx.strokeStyle = '#ff10f0';
+        ctx.shadowBlur = 20;
+        
+        // Draw simple rectangle
+        ctx.fillRect(this.x, this.y, this.width, this.height);
+        
+        // Bright outline
+        ctx.strokeStyle = '#fff';
         ctx.lineWidth = 3;
         ctx.strokeRect(this.x, this.y, this.width, this.height);
+        
         ctx.shadowBlur = 0;
     }
 
@@ -123,7 +112,7 @@ class Level {
 
     generate() {
         const groundY = 500;
-        let x = 300;
+        let x = 600; // Start obstacles further away (was 300)
 
         // Generate obstacles and stars
         while (x < this.length) {

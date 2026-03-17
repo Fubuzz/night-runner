@@ -8,10 +8,10 @@ class Player {
         this.vx = 300; // Auto-run speed
         this.vy = 0;
         this.grounded = false;
-        this.jumpPower = -600;
-        this.highJumpPower = -900; // Higher jump when holding
-        this.gravity = 1800;
-        this.maxFallSpeed = 800;
+        this.jumpPower = -450; // Lower base jump (was -600)
+        this.jumpBoost = -200; // Boost per frame when holding
+        this.gravity = 2200; // Higher gravity for snappier feel (was 1800)
+        this.maxFallSpeed = 1000;
         this.character = character;
         this.squash = 1;
         this.invincible = false;
@@ -20,6 +20,8 @@ class Player {
         this.jumping = false;
         this.jumpTime = 0;
         this.maxJumpTime = 0.3;
+        this.health = 3; // Start with 3 lives
+        this.maxHealth = 3;
     }
 
     jump(holding = false) {
@@ -34,11 +36,11 @@ class Player {
     }
     
     updateJump(dt, holding) {
-        // Variable jump height - hold for higher jump
-        if (this.jumping && holding && this.jumpTime < this.maxJumpTime) {
-            this.vy = this.highJumpPower;
+        // Variable jump height - hold to jump higher gradually
+        if (this.jumping && holding && this.jumpTime < this.maxJumpTime && this.vy < 0) {
+            this.vy += this.jumpBoost * dt; // Add upward boost while holding
             this.jumpTime += dt;
-        } else {
+        } else if (!holding) {
             this.jumping = false;
         }
     }
@@ -142,12 +144,17 @@ class Player {
     }
 
     hit() {
-        if (!this.invincible) {
+        if (!this.invincible && this.health > 0) {
+            this.health--;
             this.invincible = true;
             this.invincibleTime = 1.5;
             return true;
         }
         return false;
+    }
+    
+    isDead() {
+        return this.health <= 0;
     }
 }
 
