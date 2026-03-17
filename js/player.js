@@ -5,7 +5,7 @@ class Player {
         this.y = y;
         this.width = 30;
         this.height = 30;
-        this.vx = 0;
+        this.vx = 300; // Auto-run speed
         this.vy = 0;
         this.grounded = false;
         this.jumpPower = -600;
@@ -36,7 +36,8 @@ class Player {
             }
         }
 
-        // Update position
+        // Update position (auto-run)
+        this.x += this.vx * dt;
         this.y += this.vy * dt;
 
         // Squash animation
