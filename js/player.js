@@ -8,59 +8,98 @@ class Player {
         this.vx = 300; // Auto-run speed
         this.vy = 0;
         this.grounded = false;
-        this.jumpPower = -450; // Lower base jump (was -600)
-        this.jumpBoost = -200; // Boost per frame when holding
-        this.gravity = 2200; // Higher gravity for snappier feel (was 1800)
-        this.maxFallSpeed = 1000;
+        this.jumpSpeed = -550; // Initial jump velocity
+        this.gravity = 1600; // Gravity when rising
+        this.fallGravity = 2400; // Faster fall gravity (feels snappier)
+        this.maxFallSpeed = 800;
         this.character = character;
         this.squash = 1;
         this.invincible = false;
         this.invincibleTime = 0;
         this.glowPulse = 0;
-        this.jumping = false;
-        this.jumpTime = 0;
-        this.maxJumpTime = 0.3;
-        this.health = 3; // Start with 3 lives
+        this.isJumping = false;
+        this.jumpHeldTime = 0;
+        this.maxJumpHoldTime = 0.2; // Can hold jump for 0.2 seconds
+        this.jumpCutMultiplier = 0.5; // When released early, cut jump speed
+        this.health = 3;
         this.maxHealth = 3;
+        this.coyoteTime = 0.1; // Grace period after leaving ground
+        this.coyoteCounter = 0;
+        this.jumpBufferTime = 0.1; // Can press jump slightly before landing
+        this.jumpBufferCounter = 0;
     }
 
-    jump(holding = false) {
-        if (this.grounded) {
-            this.vy = this.jumpPower;
+    jump() {
+        // Can jump if grounded OR within coyote time
+        if (this.grounded || this.coyoteCounter > 0) {
+            this.vy = this.jumpSpeed;
             this.grounded = false;
             this.squash = 0.7;
-            this.jumping = true;
-            this.jumpTime = 0;
+            this.isJumping = true;
+            this.jumpHeldTime = 0;
+            this.coyoteCounter = 0; // Use up coyote time
+            this.jumpBufferCounter = 0; // Clear jump buffer
             audioManager.playJump();
+            return true;
+        } else {
+            // Buffer the jump input
+            this.jumpBufferCounter = this.jumpBufferTime;
+            return false;
         }
     }
     
     updateJump(dt, holding) {
-        // Variable jump height - hold to jump higher gradually
-        if (this.jumping && holding && this.jumpTime < this.maxJumpTime && this.vy < 0) {
-            this.vy += this.jumpBoost * dt; // Add upward boost while holding
-            this.jumpTime += dt;
-        } else if (!holding) {
-            this.jumping = false;
+        // If holding jump and still rising and within hold time
+        if (this.isJumping && holding && this.vy < 0 && this.jumpHeldTime < this.maxJumpHoldTime) {
+            this.jumpHeldTime += dt;
+            // Use normal gravity while holding
+            this.vy += this.gravity * dt;
+        } else {
+            // Not holding anymore or past max hold time
+            if (this.vy < 0) {
+                // Still going up but not holding - apply stronger gravity (short jump)
+                this.vy += this.fallGravity * dt;
+            } else {
+                // Falling - use fall gravity
+                this.vy += this.fallGravity * dt;
+            }
+            this.isJumping = false;
         }
     }
     
     releaseJump() {
-        this.jumping = false;
+        // When player releases jump early, cut the upward velocity
+        if (this.isJumping && this.vy < 0) {
+            this.vy *= this.jumpCutMultiplier;
+        }
+        this.isJumping = false;
     }
 
     update(dt) {
-        // Apply gravity
-        if (!this.grounded) {
-            this.vy += this.gravity * dt;
-            if (this.vy > this.maxFallSpeed) {
-                this.vy = this.maxFallSpeed;
-            }
-        }
-
         // Update position (auto-run)
         this.x += this.vx * dt;
         this.y += this.vy * dt;
+        
+        // Cap fall speed
+        if (this.vy > this.maxFallSpeed) {
+            this.vy = this.maxFallSpeed;
+        }
+        
+        // Update coyote time (grace period after leaving ground)
+        if (this.grounded) {
+            this.coyoteCounter = this.coyoteTime;
+        } else {
+            this.coyoteCounter -= dt;
+        }
+        
+        // Update jump buffer
+        if (this.jumpBufferCounter > 0) {
+            this.jumpBufferCounter -= dt;
+            // Auto-jump if we land during buffer time
+            if (this.grounded) {
+                this.jump();
+            }
+        }
 
         // Squash animation
         if (this.squash < 1) {
