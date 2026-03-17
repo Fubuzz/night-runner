@@ -9,6 +9,7 @@ class Player {
         this.vy = 0;
         this.grounded = false;
         this.jumpPower = -600;
+        this.highJumpPower = -900; // Higher jump when holding
         this.gravity = 1800;
         this.maxFallSpeed = 800;
         this.character = character;
@@ -16,15 +17,34 @@ class Player {
         this.invincible = false;
         this.invincibleTime = 0;
         this.glowPulse = 0;
+        this.jumping = false;
+        this.jumpTime = 0;
+        this.maxJumpTime = 0.3;
     }
 
-    jump() {
+    jump(holding = false) {
         if (this.grounded) {
             this.vy = this.jumpPower;
             this.grounded = false;
             this.squash = 0.7;
+            this.jumping = true;
+            this.jumpTime = 0;
             audioManager.playJump();
         }
+    }
+    
+    updateJump(dt, holding) {
+        // Variable jump height - hold for higher jump
+        if (this.jumping && holding && this.jumpTime < this.maxJumpTime) {
+            this.vy = this.highJumpPower;
+            this.jumpTime += dt;
+        } else {
+            this.jumping = false;
+        }
+    }
+    
+    releaseJump() {
+        this.jumping = false;
     }
 
     update(dt) {

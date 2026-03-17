@@ -41,35 +41,58 @@ class Game {
 
     setupControls() {
         // Touch controls
-        let touchStarted = false;
+        this.holding = false;
         
         this.canvas.addEventListener('touchstart', (e) => {
             e.preventDefault();
             if (this.state === 'playing') {
                 audioManager.init();
-                touchStarted = true;
-                this.player.jump();
+                this.holding = true;
+                this.player.jump(true);
             }
         });
 
         this.canvas.addEventListener('touchend', (e) => {
             e.preventDefault();
-            touchStarted = false;
-        });
-
-        // Mouse/keyboard controls
-        this.canvas.addEventListener('mousedown', (e) => {
-            if (this.state === 'playing') {
-                audioManager.init();
-                this.player.jump();
+            this.holding = false;
+            if (this.player) {
+                this.player.releaseJump();
             }
         });
 
+        // Mouse controls
+        this.canvas.addEventListener('mousedown', (e) => {
+            if (this.state === 'playing') {
+                audioManager.init();
+                this.holding = true;
+                this.player.jump(true);
+            }
+        });
+        
+        this.canvas.addEventListener('mouseup', (e) => {
+            this.holding = false;
+            if (this.player) {
+                this.player.releaseJump();
+            }
+        });
+
+        // Keyboard controls
         window.addEventListener('keydown', (e) => {
-            if (e.code === 'Space' && this.state === 'playing') {
+            if (e.code === 'Space' && this.state === 'playing' && !e.repeat) {
                 e.preventDefault();
                 audioManager.init();
-                this.player.jump();
+                this.holding = true;
+                this.player.jump(true);
+            }
+        });
+        
+        window.addEventListener('keyup', (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault();
+                this.holding = false;
+                if (this.player) {
+                    this.player.releaseJump();
+                }
             }
         });
 
@@ -103,6 +126,7 @@ class Game {
 
         // Update player
         this.player.update(dt);
+        this.player.updateJump(dt, this.holding);
 
         // Update level
         this.level.update(dt);

@@ -9,16 +9,17 @@ class Obstacle {
     }
 
     draw(ctx) {
-        ctx.fillStyle = '#1a0b2e';
-        ctx.strokeStyle = '#00ffff';
-        ctx.lineWidth = 2;
+        // Much more visible obstacles - bright neon buildings
+        ctx.fillStyle = '#2a1b4e'; // Darker purple fill
+        ctx.strokeStyle = '#ff10f0'; // Bright pink outline
+        ctx.lineWidth = 4;
         
         ctx.fillRect(this.x, this.y, this.width, this.height);
         ctx.strokeRect(this.x, this.y, this.width, this.height);
         
-        // Add neon lines
-        ctx.strokeStyle = '#ff10f0';
-        ctx.lineWidth = 1;
+        // Add bright neon lines across building
+        ctx.strokeStyle = '#00ffff';
+        ctx.lineWidth = 2;
         for (let i = 1; i < 4; i++) {
             const y = this.y + (this.height / 4) * i;
             ctx.beginPath();
@@ -26,6 +27,14 @@ class Obstacle {
             ctx.lineTo(this.x + this.width, y);
             ctx.stroke();
         }
+        
+        // Add glow effect
+        ctx.shadowColor = '#ff10f0';
+        ctx.shadowBlur = 15;
+        ctx.strokeStyle = '#ff10f0';
+        ctx.lineWidth = 3;
+        ctx.strokeRect(this.x, this.y, this.width, this.height);
+        ctx.shadowBlur = 0;
     }
 
     getBounds() {
@@ -147,17 +156,20 @@ class Level {
     }
 
     draw(ctx, cameraX) {
-        // Draw ground
-        ctx.fillStyle = '#0f0524';
+        // Draw ground with glow
+        ctx.fillStyle = '#2a1b4e';
         ctx.fillRect(0, 500, ctx.canvas.width, ctx.canvas.height - 500);
         
-        // Draw ground line
+        // Draw bright ground line with glow
+        ctx.shadowColor = '#00ffff';
+        ctx.shadowBlur = 20;
         ctx.strokeStyle = '#00ffff';
-        ctx.lineWidth = 3;
+        ctx.lineWidth = 5;
         ctx.beginPath();
         ctx.moveTo(0, 500);
         ctx.lineTo(ctx.canvas.width, 500);
         ctx.stroke();
+        ctx.shadowBlur = 0;
 
         // Draw obstacles
         this.obstacles.forEach(obstacle => {
